@@ -12,18 +12,28 @@ class NegativeSamplingWord2VecEmbeddingTest(tf.test.TestCase):
         a = np.array([
             [2, 5],
             [10, 8]
-        ])
+        ], dtype=np.float32)
 
         b = np.array([
             [7, 8],
             [2, 3]
-        ])
+        ], dtype=np.float32)
         output = negative_sampling_model.cos_similarity(a, b)
-        expected = [[
-            13.9427400463467,
-            26.57483532101356,
-        ]]
 
-        self.assertAllEqual(expected, output)
+        expected = np.array([
+            0.9433123908373908,
+            0.95292578001326196,
+        ])
+        expected = np.expand_dims(expected, -1)
+
+        print(output)
+
+        for expect_val, output_val, in zip(expected, output):
+            self.assertAlmostEqual(expect_val, output_val)
+
+    def test_negative_sampling_embedding_model(self):
+        pass
+
+
 
 tf.test.main()

@@ -16,11 +16,11 @@ vocab_size = 10000
 embedding_dim = 300
 
 
-data, count, dictionary, reverse_dictionary = collect_data(vocabulary_size=vocab_size, max_words_len=100)
+data, count, dictionary, reverse_dictionary = collect_data(vocabulary_size=vocab_size)
 
 
 sampling_table = sequence.make_sampling_table(vocab_size)
-print("sampling table:", sampling_table.shape)
+
 couples, labels = sequence.skipgrams(data, vocab_size, window_size=window_size, sampling_table=sampling_table)
 # word_target, word_context = zip(*couples)
 # word_target = np.array(word_target, dtype="int32")
@@ -71,6 +71,9 @@ def test_step(inputs, labels):
 
 EPOCHS = 5
 
+print("Start training...")
+
+iters = 0
 for epoch in range(EPOCHS):
       # Reset the metrics at the start of the next epoch
       train_loss.reset_states()
@@ -80,12 +83,11 @@ for epoch in range(EPOCHS):
 
       for inputs, labels in train_ds:
         train_step(inputs, labels)
-
-      # for test_images, test_labels in test_ds:
-      #   test_step(test_images, test_labels)
+        if iters % 100 == 0:
+            print("Iters: {} Loss: {}".format(iters, train_loss.result()))
+        iters += 1
 
       # template = 'Epoch {}, Loss: {}, Accuracy: {}, Test Loss: {}, Test Accuracy: {}'
       template = 'Epoch {}, Loss: {}'
       print(template.format(epoch+1, train_loss.result()))
-
 
